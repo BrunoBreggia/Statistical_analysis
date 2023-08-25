@@ -14,6 +14,8 @@ def leer_jamovi(filename):
         while content := file.readline():
             if content not in "-\n":
                 counter += 1
+                if content[0] == "<":
+                    content = "0.0009\n"
                 row.append(content[:-1])
                 if counter == len(columns):
                     data.loc[len(data)] = row
@@ -23,5 +25,5 @@ def leer_jamovi(filename):
 
 
 if __name__ == '__main__':
-    df = leer_jamovi("data/statistics_sim05_full")
-    df.to_csv("data/statistics_sim05_full.csv")
+    df = leer_jamovi("data/statistics_sim05_nods")
+    df.to_csv("data/statistics_sim05_nods.csv")
