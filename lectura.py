@@ -25,5 +25,6 @@ def leer_jamovi(filename):
 
 
 if __name__ == '__main__':
-    df = leer_jamovi("data05/statistics_sim05_nods")
-    df.to_csv("data05/statistics_sim05_nods.csv")
+    ciclo = "full"
+    df = leer_jamovi(f"data06/statistics_sim06_{ciclo}")
+    df.to_csv(f"data06/statistics_sim06_{ciclo}.csv")
