@@ -59,7 +59,8 @@ with sns.plotting_context("notebook", font_scale = 1.4):
 
     # Add annotations
     annotator = Annotator(ax, pairs, **hue_plot_params)
-    annotator.configure(test="Mann-Whitney").apply_and_annotate()
+    annotator.configure(test="Mann-Whitney", verbose=False)
+    _, results = annotator.apply_and_annotate()
 
     plt.show()
 
