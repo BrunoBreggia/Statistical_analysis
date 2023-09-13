@@ -40,17 +40,21 @@ pairs = [('ankle',    'R-R'), ('ankle',    'L-L'),
 df_datos = pd.read_csv("sim05_medianas_realizaciones.csv")
 CICLO = "swing"
 
+state_palette = sns.color_palette("YlGnBu", n_colors=2)
+states_order = ["ankle", "subt", "knee", "hip_addu", "hip_flex", "hip_rot"]
+subcat_order = ["R-R", "L-L"]
+
 hue_plot_params = {
     'data': df_datos,
     'x': 'angulo',
     'y': 'mediana',
-    # "order": subcat_order,
+    "order": states_order,
     "hue": "lados",
-    # "hue_order": states_order,
-    # "palette": state_palette
+    "hue_order": subcat_order,
+    "palette": state_palette
 }
 
-with sns.plotting_context("notebook", font_scale = 1.4):
+with sns.plotting_context("notebook", font_scale=1.4):
     # Create new plot
     fig, ax = plt.subplots(1, 1)
 
