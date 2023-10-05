@@ -61,9 +61,14 @@ with sns.plotting_context("notebook", font_scale=1.4):
     # Plot with seaborn
     ax = sns.boxplot(ax=ax, **hue_plot_params)
 
+    # add_stat_annotation(ax, data=None, x='x', y='y', hue='hue',
+    #                     box_pairs=[("A", "B"), ("C", "D")],
+    #                     text_format='full', loc='inside', verbose=2,
+    #                     test=None, pvalues=[0.01, 0.05], test_short_name='custom')
+
     # Add annotations
     annotator = Annotator(ax, pairs, **hue_plot_params)
-    annotator.configure(test="Mann-Whitney", comparisons_correction="bonferroni", text_format='star')  # verbose=False)
+    # annotator.configure(test="Mann-Whitney", comparisons_correction="bonferroni", text_format='star')  # verbose=False)
     _, results = annotator.apply_and_annotate()
 
     plt.grid()
