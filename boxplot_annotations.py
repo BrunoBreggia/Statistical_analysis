@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import statannotations.stats.StatTest
+import statannotations
 from statannotations.Annotator import Annotator
 from itertools import product
 from lectura import leer_jamovi
@@ -37,7 +39,7 @@ pairs = ([('ankle',    'R-R'), ('ankle',    'L-L')],
          )
 
 df_datos = pd.read_csv("sim05_medianas_realizaciones.csv")
-CICLO = "swing"
+CICLO = "nods"
 df_datos = df_datos[df_datos["ciclo"] == CICLO]
 
 state_palette = sns.color_palette("YlGnBu", n_colors=4)
@@ -69,10 +71,11 @@ with sns.plotting_context("notebook", font_scale=1.4):
     # Add annotations
     annotator = Annotator(ax, pairs, **hue_plot_params)
     # annotator.configure(test="Mann-Whitney", comparisons_correction="bonferroni", text_format='star')  # verbose=False)
+    annotator.test = statannotations.stats.StatTest.StatTest.from_library("Mann-Whitney")
     _, results = annotator.apply_and_annotate()
 
     plt.grid()
-    plt.title(f"Datos para el cilo {CICLO}")
+    plt.title(f"Datos para el ciclo {CICLO}")
     plt.show()
 
 # https://levelup.gitconnected.com/statistics-on-seaborn-plots-with-statannotations-2bfce0394c00
