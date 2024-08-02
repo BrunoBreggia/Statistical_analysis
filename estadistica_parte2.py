@@ -37,12 +37,12 @@ def generar_matriz(filename, outfile=None):
 
     # Graficacion
     plt.figure(figsize=(12, 8))
-    palette = sns.color_palette("rocket")
+    palette = sns.color_palette("rocket", 3)
     ax = sns.heatmap(map_data, mask=mask, center=0, square=False,
                 fmt='.2f', linewidths=.42, cmap=palette)  # , cbar=False)
     colorbar = ax.collections[0].colorbar
     colorbar.set_ticks([0.25, 0.75])
-    colorbar.set_ticklabels(['rechazo H_0', 'no rechazo H_0'])
+    colorbar.set_ticklabels(['no rechazo $H_0$', 'rechazo $H_0$'])
 
     plt.subplots_adjust(left=0.1,
                         bottom=0.1,
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # data["lateral"] = ["ipsilateral" if data.loc[i, "lados"] in ["L-L", "R-R"] else "contralateral" for i in range(len(data))]
     # data.to_csv("sim06_medianas_realizaciones_nuevo.csv")
 
-    ciclo = "nods"
+    ciclo = "full"
     datafile = f"data06/segundo_statistics_sim06_{ciclo}.csv"
     output_file = f"data06/matriz_{ciclo}.pdf"
 
