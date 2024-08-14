@@ -6,7 +6,6 @@ import statannotations.stats.StatTest
 import statannotations
 from statannotations.Annotator import Annotator
 
-plt.rcParams.update({'font.size': 12})
 plt.rcParams["figure.figsize"] = (10, 8.19)  # values in inches
 
 PHASES = ['full', 'swing', 'stance', 'nods']
@@ -41,54 +40,54 @@ PAIRS = ([('ankle',    'R-R'), ('ankle',    'L-L')],
          )
 
 
-def box_plot_medianas(filename, ciclo, to_file=False):
-    df_datos = pd.read_csv(filename)
-    df_datos = df_datos[df_datos["ciclo"] == ciclo]
-
-    state_palette = sns.color_palette("tab10", n_colors=4)
-    states_order = ["ankle", "subt", "knee", "hip-addu", "hip-flex", "hip-rot"]
-    subcat_order = ["R-R", "L-L", "R-L", "L-R"]
-
-    hue_plot_params = {
-        'data': df_datos,
-        'x': 'angulo',
-        'y': 'mediana',
-        "order": states_order,
-        "hue": "lados",
-        "hue_order": subcat_order,
-        "palette": state_palette
-    }
-
-    with sns.plotting_context("notebook", font_scale=1.4):
-        # Create new plot
-        fig, ax = plt.subplots(1, 1)
-        ax.set_ylim([0, 1])
-
-        # Plot with seaborn
-        ax = sns.boxplot(ax=ax, **hue_plot_params)
-
-        # add_stat_annotation(ax, data=None, x='x', y='y', hue='hue',
-        #                     box_pairs=[("A", "B"), ("C", "D")],
-        #                     text_format='full', loc='inside', verbose=2,
-        #                     test=None, pvalues=[0.01, 0.05], test_short_name='custom')
-
-        # Add annotations
-        annotator = Annotator(ax, PAIRS, **hue_plot_params)
-        annotator.test = statannotations.stats.StatTest.StatTest.from_library("Mann-Whitney")
-        annotator.comparisons_correction = statannotations.stats.ComparisonsCorrection.ComparisonsCorrection("Bonferroni")
-        _, results = annotator.apply_and_annotate()
-
-        plt.grid()
-        plt.title(f"Datos para el ciclo {ciclo}")
-
-        if to_file:
-            plt.savefig(to_file)
-            plt.close()
-        else:
-            plt.show()
-
-    # https://levelup.gitconnected.com/statistics-on-seaborn-plots-with-statannotations-2bfce0394c00
-
+# def box_plot_medianas(filename, ciclo, to_file=False):
+#     df_datos = pd.read_csv(filename)
+#     df_datos = df_datos[df_datos["ciclo"] == ciclo]
+#
+#     state_palette = sns.color_palette("tab10", n_colors=4)
+#     states_order = ["ankle", "subt", "knee", "hip-addu", "hip-flex", "hip-rot"]
+#     subcat_order = ["R-R", "L-L", "R-L", "L-R"]
+#
+#     hue_plot_params = {
+#         'data': df_datos,
+#         'x': 'angulo',
+#         'y': 'mediana',
+#         "order": states_order,
+#         "hue": "lados",
+#         "hue_order": subcat_order,
+#         "palette": state_palette
+#     }
+#
+#     with sns.plotting_context("notebook", font_scale=1.4):
+#         # Create new plot
+#         fig, ax = plt.subplots(1, 1)
+#         ax.set_ylim([0, 1])
+#
+#         # Plot with seaborn
+#         ax = sns.boxplot(ax=ax, **hue_plot_params)
+#
+#         # add_stat_annotation(ax, data=None, x='x', y='y', hue='hue',
+#         #                     box_pairs=[("A", "B"), ("C", "D")],
+#         #                     text_format='full', loc='inside', verbose=2,
+#         #                     test=None, pvalues=[0.01, 0.05], test_short_name='custom')
+#
+#         # Add annotations
+#         annotator = Annotator(ax, PAIRS, **hue_plot_params)
+#         annotator.test = statannotations.stats.StatTest.StatTest.from_library("Mann-Whitney")
+#         annotator.comparisons_correction = statannotations.stats.ComparisonsCorrection.ComparisonsCorrection("Bonferroni")
+#         _, results = annotator.apply_and_annotate()
+#
+#         plt.grid()
+#         plt.title(f"Datos para el ciclo {ciclo}")
+#
+#         if to_file:
+#             plt.savefig(to_file)
+#             plt.close()
+#         else:
+#             plt.show()
+#
+#     # https://levelup.gitconnected.com/statistics-on-seaborn-plots-with-statannotations-2bfce0394c00
+#
 
 def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_label: bool = True, to_file: str = False):
     df_datos = pd.read_csv(filename)
@@ -109,7 +108,7 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
         return None
 
     # state_palette = sns.color_palette("tab10", n_colors=4)
-    states_order = ["ankle", "subt", "knee", "hip-addu", "hip-flex", "hip-rot"]
+    states_order = ["ankle", "knee", "hip-flex", "hip-rot", "hip-addu", "subt"]
 
     hue_plot_params = {
         'data': df_datos,
@@ -123,17 +122,24 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
 
     with sns.plotting_context("notebook", font_scale=1.4):
         # Create new plot
+        plt.rcParams.update({'font.size': 10})
         fig, ax = plt.subplots(1, 1)
+        fig.set_size_inches((7, 6))
         plt.subplots_adjust(left=0.1,
                             bottom=0.1,
                             right=0.95,
                             top=0.95,
                             wspace=0.4,
                             hspace=0.2)
-        ax.set_ylim([0, 1])
+        ax.set_ylim([0, 0.7])
 
         # Plot with seaborn
         ax = sns.boxplot(ax=ax, **hue_plot_params)
+
+        if ciclo != "full":
+            ax.get_legend().set_visible(False)
+        if ciclo != "swing":
+            ax.set(ylabel=None)
 
         # Add annotations
         pairs = PAIRS[:6] if lateralidad == "ipsilateral" else PAIRS[6:]
@@ -144,7 +150,6 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
         _, results = annotator.apply_and_annotate()
 
         plt.grid()
-        #plt.title(f"Datos para el ciclo {ciclo}")
 
         if to_file:
             plt.savefig(to_file)
@@ -160,13 +165,12 @@ if __name__ == "__main__":
     output_file = f'../Documento Final/figuras resultados/{CICLO}.pdf'
     # box_plot_medianas(data_file, CICLO)  # , output_file)
 
-    # phase = "full"
-    # lado = "ipsilateral"
+    phase = "full"
+    lado = "contralateral"
     # box_plot_medianas_separado(data_file, phase, lado)
 
     for phase in PHASES:
         for lado in ["ipsilateral", "contralateral"]:
             output_file = f'../Documento Final/figuras resultados/{phase}_{lado[:4]}.pdf'
             box_plot_medianas_separado(data_file, phase, lado, to_file=output_file)
-
 

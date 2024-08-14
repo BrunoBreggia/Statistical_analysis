@@ -29,27 +29,38 @@ def generar_matriz(filename, outfile=None):
                           'IM2': 'IM1'},
                  inplace=True)
 
-    data["Rechazo H_0"] = [False if i[0] == "<" else True for i in data["p"]]
-
     data_total = pd.concat([data, data2])
     map_data = data_total.pivot_table(index="IM1", columns="IM2", values="Rechazo H_0", fill_value=1)
+
+    states_order = ["ankle-i", "knee-i", "hip-flex-i", "hip-rot-i", "hip-addu-i", "subt-i",
+                    "ankle-c", "knee-c", "hip-flex-c", "hip-rot-c", "hip-addu-c", "subt-c"]
+    map_data = map_data[states_order]  # order columns
+    map_data = map_data.reindex(index=states_order)  # order rows
+
+    # Mask for lower triangular half of heat-map
     mask = np.triu(np.ones_like(map_data, dtype=bool))
 
     # Graficacion
-    plt.figure(figsize=(12, 8))
-    palette = sns.color_palette("rocket", 3)
+    plt.rcParams.update({'font.size': 14})
+    plt.figure(figsize=(10, 7))
+    palette = sns.color_palette("rocket", 4)
     ax = sns.heatmap(map_data, mask=mask, center=0, square=False,
-                fmt='.2f', linewidths=.42, cmap=palette)  # , cbar=False)
+                     fmt='.2f', linewidths=.42, cmap=palette)  # , cbar=False)
+    # ax.axis('tight')
+    ax.set(xlabel=None, ylabel=None)
+    ax.tick_params(axis="x", labelrotation=35)
+
     colorbar = ax.collections[0].colorbar
     colorbar.set_ticks([0.25, 0.75])
-    colorbar.set_ticklabels(['no rechazo $H_0$', 'rechazo $H_0$'])
+    # colorbar.set_ticklabels(['no rechazo $H_0$', 'rechazo $H_0$'])
+    colorbar.set_ticklabels(['NS', 'p<0.001'])
 
     plt.subplots_adjust(left=0.1,
                         bottom=0.1,
-                        right=0.95,
-                        top=0.95,
-                        wspace=0.4,
-                        hspace=0.2)
+                        right=0.99,
+                        top=0.99,
+                        wspace=0,
+                        hspace=0)
 
     if outfile:
         plt.savefig(outfile)
@@ -63,7 +74,7 @@ def boxplot_comparativo(filename, ciclo, lado, to_file=None):
     df_data = df_data[df_data["ciclo"] == ciclo]
     df_data = df_data[df_data["lateral"] == lado]
 
-    states_order = ["ankle", "subt", "knee", "hip-addu", "hip-flex", "hip-rot"]
+    states_order = ["ankle", "knee", "hip-flex", "hip-rot", "hip-addu", "subt"]
 
     if lado == "ipsilateral":
         palette = sns.color_palette("bright")
@@ -83,21 +94,24 @@ def boxplot_comparativo(filename, ciclo, lado, to_file=None):
         "order": states_order,
     }
 
+    plt.rcParams.update({'font.size': 18})
     sns.set_palette(palette)
     fig, ax = plt.subplots(1, 1)
-    ax.set_ylim([0, 1])
+    fig.set_size_inches((10, 7))
+    ax.set_ylim([0, 0.6])
 
     # Plot with seaborn
     sns.boxplot(ax=ax, **hue_plot_params)
-
     plt.grid()
-
     plt.subplots_adjust(left=0.1,
                         bottom=0.1,
                         right=0.95,
                         top=0.95,
                         wspace=0.4,
                         hspace=0.2)
+
+    if lado == "contralateral":
+        ax.set(ylabel=None)
 
     if to_file:
         plt.savefig(to_file)
@@ -112,11 +126,20 @@ if __name__ == "__main__":
     # data["lateral"] = ["ipsilateral" if data.loc[i, "lados"] in ["L-L", "R-R"] else "contralateral" for i in range(len(data))]
     # data.to_csv("sim06_medianas_realizaciones_nuevo.csv")
 
-    ciclo = "full"
+    ciclo = "swing"
     datafile = f"data06/segundo_statistics_sim06_{ciclo}.csv"
     output_file = f"data06/matriz_{ciclo}.pdf"
+    generar_matriz(datafile)
 
-    generar_matriz(datafile)  # , output_file)
+    # for ciclo in ['full', 'swing', 'stance', 'nods']:
+    #     datafile = f"data06/segundo_statistics_sim06_{ciclo}.csv"
+    #     output_file = f"data06/matriz_{ciclo}.pdf"
+    #     generar_matriz(datafile, output_file)
+
+    # ciclo = "swing"
+    # lado = "ipsilateral"
+    # datafile = "sim06_medianas_realizaciones_nuevo.csv"
+    # boxplot_comparativo(datafile, ciclo, lado)
 
     # for ciclo in ['full', 'swing', 'stance', 'nods']:
     #     for lado in ["ipsilateral", "contralateral"]:
