@@ -122,7 +122,7 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
 
     with sns.plotting_context("notebook", font_scale=1.4):
         # Create new plot
-        plt.rcParams.update({'font.size': 10})
+        plt.rcParams.update({'font.size': 18})
         fig, ax = plt.subplots(1, 1)
         fig.set_size_inches((7, 6))
         plt.subplots_adjust(left=0.1,
@@ -132,9 +132,12 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
                             wspace=0.4,
                             hspace=0.2)
         ax.set_ylim([0, 0.7])
+        if ciclo == "nods":
+            ax.set_ylim([0, 0.2])
 
         # Plot with seaborn
         ax = sns.boxplot(ax=ax, **hue_plot_params)
+        ax.set(xlabel=None)
 
         if ciclo != "full":
             ax.get_legend().set_visible(False)
@@ -149,7 +152,9 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
             "Bonferroni")
         _, results = annotator.apply_and_annotate()
 
+        ax.tick_params(axis="x", labelrotation=35)
         plt.grid()
+        plt.tight_layout()
 
         if to_file:
             plt.savefig(to_file)
@@ -165,8 +170,8 @@ if __name__ == "__main__":
     output_file = f'../Documento Final/figuras resultados/{CICLO}.pdf'
     # box_plot_medianas(data_file, CICLO)  # , output_file)
 
-    phase = "full"
-    lado = "contralateral"
+    phase = "swing"
+    lado = "ipsilateral"
     # box_plot_medianas_separado(data_file, phase, lado)
 
     for phase in PHASES:

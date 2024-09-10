@@ -41,14 +41,14 @@ def generar_matriz(filename, outfile=None):
     mask = np.triu(np.ones_like(map_data, dtype=bool))
 
     # Graficacion
-    plt.rcParams.update({'font.size': 14})
+    plt.rcParams.update({'font.size': 18})
     plt.figure(figsize=(10, 7))
     palette = sns.color_palette("rocket", 4)
     ax = sns.heatmap(map_data, mask=mask, center=0, square=False,
                      fmt='.2f', linewidths=.42, cmap=palette)  # , cbar=False)
     # ax.axis('tight')
     ax.set(xlabel=None, ylabel=None)
-    ax.tick_params(axis="x", labelrotation=35)
+    ax.tick_params(axis="x", labelrotation=90)
 
     colorbar = ax.collections[0].colorbar
     colorbar.set_ticks([0.25, 0.75])
@@ -61,6 +61,8 @@ def generar_matriz(filename, outfile=None):
                         top=0.99,
                         wspace=0,
                         hspace=0)
+
+    plt.tight_layout()
 
     if outfile:
         plt.savefig(outfile)
@@ -99,9 +101,12 @@ def boxplot_comparativo(filename, ciclo, lado, to_file=None):
     fig, ax = plt.subplots(1, 1)
     fig.set_size_inches((10, 7))
     ax.set_ylim([0, 0.6])
+    if ciclo == "nods":
+        ax.set_ylim([0, 0.2])
 
     # Plot with seaborn
     sns.boxplot(ax=ax, **hue_plot_params)
+    ax.set(xlabel=None)
     plt.grid()
     plt.subplots_adjust(left=0.1,
                         bottom=0.1,
@@ -109,6 +114,8 @@ def boxplot_comparativo(filename, ciclo, lado, to_file=None):
                         top=0.95,
                         wspace=0.4,
                         hspace=0.2)
+
+    plt.tight_layout()
 
     if lado == "contralateral":
         ax.set(ylabel=None)
@@ -129,22 +136,22 @@ if __name__ == "__main__":
     ciclo = "swing"
     datafile = f"data06/segundo_statistics_sim06_{ciclo}.csv"
     output_file = f"data06/matriz_{ciclo}.pdf"
-    generar_matriz(datafile)
+    # generar_matriz(datafile)
 
     # for ciclo in ['full', 'swing', 'stance', 'nods']:
     #     datafile = f"data06/segundo_statistics_sim06_{ciclo}.csv"
     #     output_file = f"data06/matriz_{ciclo}.pdf"
     #     generar_matriz(datafile, output_file)
 
-    # ciclo = "swing"
-    # lado = "ipsilateral"
-    # datafile = "sim06_medianas_realizaciones_nuevo.csv"
+    ciclo = "nods"
+    lado = "ipsilateral"
+    datafile = "sim06_medianas_realizaciones_nuevo.csv"
     # boxplot_comparativo(datafile, ciclo, lado)
 
-    # for ciclo in ['full', 'swing', 'stance', 'nods']:
-    #     for lado in ["ipsilateral", "contralateral"]:
-    #         # ciclo = "full"
-    #         # lado = "contralateral"
-    #         datafile = "sim06_medianas_realizaciones_nuevo.csv"
-    #         output_file = f"data06/boxplot_final_{ciclo}_{lado}.pdf"
-    #         boxplot_comparativo(datafile, ciclo, lado, output_file)
+    for ciclo in ['full', 'swing', 'stance', 'nods']:
+        for lado in ["ipsilateral", "contralateral"]:
+            # ciclo = "full"
+            # lado = "contralateral"
+            datafile = "sim06_medianas_realizaciones_nuevo.csv"
+            output_file = f"data06/boxplot_final_{ciclo}_{lado}.pdf"
+            boxplot_comparativo(datafile, ciclo, lado, output_file)
