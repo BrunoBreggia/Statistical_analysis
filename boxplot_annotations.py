@@ -139,9 +139,9 @@ def box_plot_medianas_separado(filename: str, ciclo: str, lateralidad: str, add_
         ax = sns.boxplot(ax=ax, **hue_plot_params)
         ax.set(xlabel=None)
 
-        if ciclo != "full":
-            ax.get_legend().set_visible(False)
         if ciclo != "swing":
+            ax.get_legend().set_visible(False)
+        if lateralidad != "ipsilateral":
             ax.set(ylabel=None)
 
         # Add annotations
